@@ -5,7 +5,6 @@ WORKDIR /app
 COPY . /app/
 
 # hadolint ignore=DL3013
-broken hear >>>>
 RUN pip install --no-cache-dir --upgrade pip &&\
     pip install --no-cache-dir --trusted-host pypi.python.org -r requirements.txt
 
