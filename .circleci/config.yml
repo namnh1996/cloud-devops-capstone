@@ -33,23 +33,23 @@ jobs:
             . venv/bin/activate
             make lint
 
-  # deploy-app:
-  #   docker:
-  #     - image: 'cimg/base:stable'
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Create deployment template
-  #         command: |
-  #           sed -i "s/__IMAGE_TAG__/${CIRCLE_SHA1:0:7}/g" deployment/deployment.yaml
-  #           cat deployment/deployment.yaml
-  #     - aws-eks/update-kubeconfig-with-authenticator:
-  #         cluster-name: ${EKS_CLUSTER_NAME}
-  #         aws-region: ${AWS_REGION} 
-  #         install-kubectl: true
-  #     - kubernetes/create-or-update-resource:
-  #         resource-file-path: deployment/deployment.yaml
-  #         show-kubectl-command: true
+  deploy-app:
+    docker:
+      - image: 'cimg/base:stable'
+    steps:
+      - checkout
+      - run:
+          name: Create deployment template
+          command: |
+            sed -i "s/__IMAGE_TAG__/${CIRCLE_SHA1:0:7}/g" deployment/deployment.yaml
+            cat deployment/deployment.yaml
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: ${EKS_CLUSTER_NAME}
+          aws-region: ${AWS_REGION} 
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          resource-file-path: deployment/deployment.yaml
+          show-kubectl-command: true
 workflows:
   default:
     jobs:
@@ -61,6 +61,6 @@ workflows:
           path: .
           repo: 'udacity-cloud-devops-capstone-project-repo'
           tag: ${CIRCLE_SHA1:0:7}
-      # - deploy-app:
-      #     requires:
-      #       - build-and-push-image
+      - deploy-app:
+          requires:
+            - build-and-push-image
